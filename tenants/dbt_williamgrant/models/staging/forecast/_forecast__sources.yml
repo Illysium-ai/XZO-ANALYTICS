@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: forecast
+    database: "{{ target.database }}"
+    schema: forecast
+    description: "William Grant VIP Data Source"
+    
+    tables:
+      - name: depletions_forecast_published_forecasts
+      - name: depletions_forecast_publications
+      - name: depletions_forecast_publication_groups
+      - name: manual_input_depletions_forecast
+      - name: manual_input_depletions_forecast_versions
+      - name: depletions_forecast_published_forecasts_chains
+      - name: manual_input_depletions_forecast_chains
+      - name: manual_input_depletions_forecast_chains_versions
+      # Budget workflow tables
+      - name: manual_input_depletions_budget
+        description: "Method-agnostic manual budget overrides with versioning"
+        columns:
+          - name: budget_cycle_date
+            description: "Budget cycle date (FGMD) - links budgets to baseline forecast"
+          - name: market_code
+            description: "Market identifier"
+          - name: distributor_id
+            description: "Distributor identifier"
+          - name: variant_size_pack_id
+            description: "Product identifier"
+          - name: forecast_year
+            description: "Budget year"
+          - name: month
+            description: "Budget month (1-12)"
+          - name: manual_case_equivalent_volume
+            description: "User-provided override volume (method-agnostic)"
+      - name: manual_input_depletions_budget_versions
+        description: "Immutable version history of budget override changes"
+      - name: depletions_budget_approvals
+        description: "Budget cycle approval records and locks"
+      - name: depletions_budget_generated
+        description: "Generated Y+1 budget data across all forecast methods"
+      - name: depletions_budget_primary_method
+        description: "Budget-specific primary method preferences per key"
+      - name: depletions_budget_primary_method_versions
+        description: "Version history of primary method changes"
+      - name: depletions_budget_custom_goals_2026_upload
+        description: "Uploaded custom goals for 2026"

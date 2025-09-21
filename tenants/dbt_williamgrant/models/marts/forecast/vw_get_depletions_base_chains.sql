@@ -1,0 +1,72 @@
+{{ config(
+    materialized = 'view'
+) }}
+
+SELECT
+    f.* RENAME (
+        MARKET_CODE AS MARKET_ID,
+        MARKET_NAME AS MARKET,
+        FORECAST_YEAR AS YEAR,
+        CASE_EQUIVALENT_VOLUME AS BASE_CASE_EQUIVALENT_VOLUME,
+        FORECAST_STATUS AS BASE_FORECAST_STATUS,
+        CUSTOMER_NAME AS CUSTOMER),
+    p.SOURCE_TABLE,
+    m.MANUAL_CASE_EQUIVALENT_VOLUME,
+    pp.PUBLICATION_STATUS,
+    m.FORECAST_STATUS AS MANUAL_FORECAST_STATUS,
+    p.VERSION_NUMBER,
+    m.CURRENT_VERSION AS MANUAL_CURRENT_VERSION,
+    p.GROUP_ID,
+    p.PUBLICATION_ID,
+    tag.TAG_IDS,
+    tag.TAG_NAMES,
+    m.COMMENT,
+    pred.PROJECTED_CASE_EQUIVALENT_QUANTITY,
+    p_pub.CASE_EQUIVALENT_VOLUME AS PREV_PUBLISHED_CASE_EQUIVALENT_VOLUME,
+    gsv.GSV_RATE,
+    pfc.IS_PRIMARY_FORECAST_METHOD
+FROM {{ ref('depletions_forecast_init_draft_chains') }} AS f
+LEFT JOIN {{ source('forecast', 'manual_input_depletions_forecast_chains') }} m
+    ON f.MARKET_CODE = m.MARKET_CODE
+    AND f.DATA_TYPE = 'forecast'
+    AND f.FORECAST_YEAR = m.FORECAST_YEAR
+    AND f.MONTH = m.MONTH
+    AND f.DISTRIBUTOR_ID = m.DISTRIBUTOR_ID
+    AND f.PARENT_CHAIN_CODE = m.PARENT_CHAIN_CODE
+    AND f.VARIANT_SIZE_PACK_ID = m.VARIANT_SIZE_PACK_ID
+LEFT JOIN {{ source('forecast', 'depletions_forecast_published_forecasts_chains') }} p
+    ON f.FORECAST_GENERATION_MONTH_DATE = p.FORECAST_GENERATION_MONTH_DATE
+    AND f.MARKET_CODE = p.MARKET_CODE
+    AND f.FORECAST_YEAR = p.FORECAST_YEAR
+    AND f.MONTH = p.MONTH
+    AND f.DISTRIBUTOR_ID = p.DISTRIBUTOR_ID
+    AND f.PARENT_CHAIN_CODE = p.PARENT_CHAIN_CODE
+    AND f.VARIANT_SIZE_PACK_ID = p.VARIANT_SIZE_PACK_ID
+LEFT JOIN {{ source('forecast', 'depletions_forecast_publications') }} pp
+    ON p.PUBLICATION_ID = pp.PUBLICATION_ID
+LEFT JOIN {{ source('forecast', 'depletions_forecast_published_forecasts_chains') }} p_pub
+    ON DATEADD(MONTH, -1, f.FORECAST_GENERATION_MONTH_DATE) = p_pub.FORECAST_GENERATION_MONTH_DATE
+    AND f.MARKET_CODE = p_pub.MARKET_CODE
+    AND f.FORECAST_YEAR = p_pub.FORECAST_YEAR
+    AND f.MONTH = p_pub.MONTH
+    AND f.DISTRIBUTOR_ID = p_pub.DISTRIBUTOR_ID
+    AND f.PARENT_CHAIN_CODE = p_pub.PARENT_CHAIN_CODE
+    AND f.VARIANT_SIZE_PACK_ID = p_pub.VARIANT_SIZE_PACK_ID
+LEFT JOIN {{ ref('depletions_forecast_primary_forecast_method_chains') }} pfc
+    ON f.MARKET_CODE = pfc.MARKET_CODE
+    AND f.FORECAST_METHOD = pfc.FORECAST_METHOD
+    AND f.DISTRIBUTOR_ID = pfc.DISTRIBUTOR_ID
+    AND f.PARENT_CHAIN_CODE = pfc.PARENT_CHAIN_CODE
+    AND f.VARIANT_SIZE_PACK_ID = pfc.VARIANT_SIZE_PACK_ID
+LEFT JOIN {{ source('master_data', 'apollo_variant_size_pack_tag') }} tag
+    ON f.VARIANT_SIZE_PACK_ID = tag.VARIANT_SIZE_PACK_ID
+LEFT JOIN {{ ref('depletions_forecast_monthend_prediction_chains') }} pred
+    ON f.MARKET_CODE = pred.MARKET_CODE
+    AND f.FORECAST_MONTH_DATE = pred.MONTH_DATE
+    AND f.DISTRIBUTOR_ID = pred.DISTRIBUTOR_ID
+    AND f.PARENT_CHAIN_CODE = pred.PARENT_CHAIN_CODE
+    AND f.VARIANT_SIZE_PACK_ID = pred.VARIANT_SIZE_PACK_ID
+LEFT JOIN {{ ref('hyperion_gsv_rates_by_customer') }} gsv
+    ON f.MARKET_CODE = gsv.MARKET_CODE
+    AND f.CUSTOMER_ID = gsv.CUSTOMER_ID
+    AND f.VARIANT_SIZE_PACK_ID = gsv.VARIANT_SIZE_PACK_ID

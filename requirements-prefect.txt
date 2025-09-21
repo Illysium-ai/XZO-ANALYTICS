@@ -1,0 +1,6 @@
+prefect>=3.0.0
+prefect-dbt[snowflake]>=0.7.0
+# Pin the dbt adapter to your project’s major.minor; adjust if needed after local validation
+# For dbt Core >=1.10.0, use the following:
+dbt-core~=1.10.10
+dbt-snowflake~=1.10.0

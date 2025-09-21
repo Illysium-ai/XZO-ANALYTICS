@@ -1,0 +1,49 @@
+name: CI - dbt parse
+
+on:
+  workflow_dispatch:
+  # pull_request:
+  # push:
+  #   branches: [ main ]
+
+jobs:
+  dbt-parse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run dbt deps
+        working-directory: tenants/dbt_williamgrant
+        run: dbt deps
+
+      - name: Run dbt parse
+        working-directory: tenants/dbt_williamgrant
+        env:
+          DBT_PROFILE_NAME: apollo-snowflake
+          DBT_TARGET: dev
+          DBT_THREADS: '8'
+          SNOWFLAKE_ACCOUNT: test
+          SNOWFLAKE_USER: test
+          SNOWFLAKE_ROLE: test
+          SNOWFLAKE_DATABASE: test
+          SNOWFLAKE_WAREHOUSE: test
+          DBT_SCHEMA: test
+          SNOWFLAKE_PRIVATE_KEY_PEM: "-----BEGIN PRIVATE KEY-----\nMIIB...\n-----END PRIVATE KEY-----\n"
+        run: dbt parse

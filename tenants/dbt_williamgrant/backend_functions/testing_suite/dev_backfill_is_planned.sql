@@ -1,0 +1,47 @@
+-- Dev backfill script to enable is_planned for products in APOLLO_DEVELOPMENT
+-- Execute with Snow CLI: snow sql -f tenants/dbt_williamgrant/backend_functions/testing_suite/dev_backfill_is_planned.sql
+
+
+-- Ensure columns exist with defaults (safe to run multiple times)
+ALTER TABLE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+  ADD COLUMN IF NOT EXISTS IS_PLANNED VARCHAR DEFAULT NULL; -- 'true','false','default'
+ALTER TABLE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+  ADD COLUMN IF NOT EXISTS MARKET_CODE_EXCLUSIONS ARRAY DEFAULT ARRAY_CONSTRUCT();
+ALTER TABLE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+  ADD COLUMN IF NOT EXISTS CUSTOMER_ID_EXCLUSIONS ARRAY DEFAULT ARRAY_CONSTRUCT();
+ALTER TABLE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+  ADD COLUMN IF NOT EXISTS IS_CUSTOM_PRODUCT BOOLEAN DEFAULT FALSE;
+
+-- Backfill nulls to TRUE so planned zero-coverage logic can engage
+UPDATE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+SET IS_PLANNED = 'true';
+
+-- Exclude market 'USAPA1' for variant_size_pack_id 'BV002-12-750'
+UPDATE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+SET MARKET_CODE_EXCLUSIONS = 
+    CASE 
+        WHEN MARKET_CODE_EXCLUSIONS IS NULL THEN ARRAY_CONSTRUCT('USAPA1')
+        ELSE ARRAY_CAT(MARKET_CODE_EXCLUSIONS, ARRAY_CONSTRUCT('USAPA1'))
+    END
+WHERE VARIANT_SIZE_PACK_ID = 'BV002-12-750';
+
+select * from MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+where VARIANT_SIZE_PACK_ID = 'BV002-12-750';
+-- OPTIONAL: Targeted enablement for products with no history (uncomment to use)
+-- This identifies VSPs with no distributor-level sales in the last 12 months and sets them planned
+-- CREATE OR REPLACE TEMPORARY TABLE TMP_NO_HISTORY_VSP AS
+-- SELECT DISTINCT v.variant_size_pack_id
+-- FROM MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG v
+-- LEFT JOIN VIP.RAD_DISTRIBUTOR_LEVEL_SALES r
+--   ON r.variant_size_pack_id = v.variant_size_pack_id
+--   AND r.month_date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '12 months'
+-- WHERE r.variant_size_pack_id IS NULL;
+
+-- UPDATE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+-- SET IS_PLANNED = TRUE
+-- WHERE VARIANT_SIZE_PACK_ID IN (SELECT variant_size_pack_id FROM TMP_NO_HISTORY_VSP);
+
+-- OPTIONAL: Disable planning for specific products (example)
+-- UPDATE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+-- SET IS_PLANNED = FALSE
+-- WHERE VARIANT_SIZE_PACK_ID IN ('EXAMPLE_VSP_1','EXAMPLE_VSP_2');

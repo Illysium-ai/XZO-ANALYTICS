@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: stg_hyperion__gsv_rates
+  - name: stg_hyperion__sku_master
+  - name: stg_hyperion__customer_master 

@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: master_data
+    database: "{{ target.database }}"
+    schema: master_data
+    description: "William Grant Master Data Source"
+    
+    tables:
+      - name: hyperion_translation
+      - name: nrm_system_translation
+      - name: vistaar_products
+      - name: vistaar_translation_market
+      - name: hyperion_customer_planning_group_mapping
+      - name: hyperion_sku_forecast_method
+        description: "Primary Forecast Method by Hyperion Size Pack"
+      - name: hyperion_gsv_rates
+        description: "Hyperion GSV rates data"
+      - name: hyperion_customer_master
+        description: "Hyperion customer master data"
+      - name: hyperion_sku_master
+        description: "Hyperion SKU master data"
+      - name: market_settings
+        description: "Market settings"
+      - name: apollo_variant_size_pack_tag
+      - name: apollo_product_tags

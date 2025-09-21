@@ -1,0 +1,65 @@
+name: 'dbt_williamgrant'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'apollo-snowflake'
+
+# These configurations specify where dbt should look for different types of files.
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Ensure proper macro resolution
+require-dbt-version: ">=1.0.0"
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+models:
+  +incremental_strategy: "merge"
+
+  dbt_williamgrant:
+    # Config indicated by + and applies to all files under models/
+    +materialized: table
+
+    # Different layers of the data model
+    staging:
+      +materialized: view
+
+      # Customize materializations for certain mart models
+      master:
+        +schema: MASTER_DATA
+      vip:
+        +schema: VIP
+      forecast:
+        +schema: FORECAST
+
+    marts:
+      +materialized: table
+
+      # Customize materializations for certain mart models
+      fact:
+        +schema: VIP
+      forecast:
+        +schema: FORECAST
+      master:
+        +schema: MASTER_DATA
+
+seeds:
+  dbt_williamgrant:
+    +enabled: true
+    +full_refresh: false
+    +schema: MASTER_DATA
+flags:
+  require_generic_test_arguments_property: true
+
+on-run-end:
+  - "{{ on_run_end_export_rad_sales_fact() }}"

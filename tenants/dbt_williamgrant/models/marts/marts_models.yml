@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: apollo_account_master
+    description: "The apollo_account_master model is a master table for accounts, containing detailed information about each account. It includes account ID, distributor ID, DBA, address line 1, address line 2, city, state, zip code, country, phone number, primary contact, primary email, parent distributor ID, distributor representative, distributor rank, certification status, phase, last audit date, industry tier, division code, division name, area code, area name, market code, market name, and Hyperion market details. The data is sourced from the 'vocot' table in the 'wg_vip_s3' schema and the 'stg_hyperion__customer_master' table in the 'wg_vip_s3_dev' schema."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - outlet_id
+              - distributor_id
+  - name: apollo_sku_master
+    description: "The apollo_sku_master model is a comprehensive SKU master table that contains detailed information about each SKU. It includes SKU ID, description, category, brand, variant, units, size pack description, SKU status, activation and deactivation dates, weight, alcohol percentage, vintage year, unit volume description, standardized unit volume in ml, case equivalent factor and type, case GTIN, retail GTIN, and Hyperion SKU details. The data is sourced from the 'itm_2_da' table in the 'wg_vip_s3' schema and the 'stg_hyperion__sku_master' table in the 'wg_vip_s3_dev' schema."
+    columns:
+      - name: sku_id
+        tests:
+          - unique
+  - name: apollo_dist_master
+    description: "The apollo_dist_master model is a master table for distributors, containing detailed information about each distributor. It includes distributor ID, name, street address, city, state, zip code, phone number, primary contact, primary email, parent distributor ID, distributor representative, distributor rank, certification status, phase, last audit date, industry tier, division code, division name, area code, area name, market code, market name, and Hyperion market details. The data is sourced from the 'distda' table in the 'wg_vip_s3' schema and the 'stg_hyperion__customer_master' table in the 'wg_vip_s3_dev' schema."
+    columns:
+      - name: distributor_id
+        tests:
+          - unique
+  - name: apollo_variant_size_pack_tag
+    columns:
+      - name: variant_size_pack_id
+        tests:
+          - unique
+  - name: depletions_summary_fact
+    description: "Summary of depletions data (distributor to retailer sales)"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - distributor_id
+              - alt_dist_id
+              - year_month
+              - period
+              - sku_id
+              - distributor_item_id
+    columns:
+      - name: variant_size_pack_id
+        tests:
+          - not_null
+
+  - name: rad_sales_fact
+    description: "Fact table for retail sales data (distributor to retailer)"
+
+  - name: rad_invoice_level_sales
+    description: "Aggregated sales data at the outlet/account level"
+
+  - name: rad_account_level_sales
+    description: "Account level sales with B-tree and BRIN indexes"
+  - name: rad_distributor_level_sales
+    description: "Distributor level sales with B-tree and BRIN indexes"
+
+  - name: hyperion_gsv_rates_by_customer
+  - name: markets_master
+  - name: depletions_forecast_init_draft
+  - name: distributor_allocation_by_market_size_pack

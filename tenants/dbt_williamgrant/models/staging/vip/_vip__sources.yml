@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: vip
+    database: "{{ target.database }}"
+    schema: source_data
+    description: "William Grant VIP Data Source"
+    
+    tables:
+      - name: itm2da
+        description: "Product item master data"
+      
+      - name: deplda
+        description: "Depletions data from distributors to retailers"
+            
+      - name: distda
+        description: "Distributor master data"
+            
+      - name: vipout
+        description: "Outlet master data"
+            
+      - name: outda
+        description: "Additional outlet data"
+            
+      - name: voownhier
+        description: "Outlet ownership hierarchy"
+            
+      - name: voowndesc
+        description: "Outlet ownership descriptions"
+            
+      - name: slsda
+        description: "RAD Sales data"
+      
+      - name: vochain
+        description: "VIP Chain Code reference data"
+
+      - name: vocot
+        description: "Class of trade reference data"
+
+      - name: vipvalue
+        description: "Field values reference data"
+
+      - name: srschain
+        description: "Chain reference data"
+
+      - name: srsvalue
+        description: "Valid values reference data"

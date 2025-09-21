@@ -1,0 +1,145 @@
+1. Alcohol Industry Framework
+Three-Tier System:
+
+Tier 1: Producers (Breweries, Wineries, Distilleries)
+
+Tier 2: Distributors/Wholesalers
+
+Tier 3: Retailers (Liquor Stores, Bars, Restaurants, Grocery)
+
+Key Insight: Shipments flow Tier 1→2, depletions measure Tier 2→3 sales
+
+2. Product Hierarchy
+Copy
+Category (Beer/Wine/Spirits)
+  → Subcategory (Craft Beer/Champagne/Whiskey)
+    → Brand (e.g., Brand X Cabernet)
+      → Variant (750ml Bottle, 12oz Can)
+        → Size Pack
+          → SKU (Unique UPC/Product Code)
+Size Classes: Standardized units (Case Equivalent = 9L)
+
+ABV Tracking: Alcohol by volume required for tax calculations
+
+3. Customer/Market Hierarchy
+Copy
+Region (Northeast US)
+  → State (NY)
+    → County (Onondaga)
+      → Account Type (Off-Premise/On-Premise)
+        → Account (Specific Bar/Store)
+Channel Types:
+
+Off-Premise: Retail stores (sold for consumption elsewhere)
+
+On-Premise: Bars/restaurants (consumed onsite)
+
+4. Key Metrics
+Depletions: Distributor-to-retailer sales (true demand signal)
+
+Shipments: Producer-to-distributor inventory movement
+
+Days of Supply: (Distributor Inventory ÷ Avg Daily Depletions)
+
+Price Tier: Luxury/Premium/Value segmentation
+
+4a. Volume Context Matters:
+
+Shipments Volume (Tier 1→2): Physical cases moved from producer (William Grant) to distributors
+
+Example: 500 cases of Glenfiddich 15yr shipped to Southern Glazer's CA warehouse
+
+Modeling: Raw cases_shipped + gross_revenue (wholesale pricing)
+
+Depletions Volume (Tier 2→3): Cases sold through distributors to retailers
+
+Example: 200 cases of same SKU sold to BevMo stores
+
+Modeling: cases_sold + net_revenue (after distributor margins)
+
+4b. Key Differences:
+
+Aspect	Shipments	Depletions
+Timing	Leading indicator	Lagging indicator
+Financials	Wholesale $	Retail-equivalent $
+Demand Signal	Production planning	Consumer demand
+Tax Impact	Excise tax due	Sales tax accrual
+
+
+5. Regulatory Factors
+Tax Jurisdictions: Federal/state/county excise taxes
+
+Compliance Flags: Dry counties, shipping restrictions
+
+License Tracking: Permit numbers for distributors/retailers
+
+6. Data Structure Examples
+Fact Tables:
+
+Depletions: Date, DistributorID, RetailerID, SKU, Units, $, ExciseTax
+
+Shipments: Date, ProducerID, DistributorID, SKU, CasesShipped
+
+Inventory: SnapshotDate, DistributorID, SKU, WarehouseQty
+
+Dimension Tables:
+
+Product: SKU, Size, ABV, Brand, Variant, Category
+
+Accounts: AccountID, Name, Type (On/Off Premise), LicenseNumber
+
+`Geography**: MarketID, State, County, TTBRegion
+
+7. Hierarchy Relationships
+Product Rollup: SKU → Variant → Brand → Subcategory → Category
+
+Market Rollup: Store → County → State → Region → National
+
+Customer Rollup: Individual Account → Chain → Parent Company
+
+8. Temporal Considerations
+Depletion Lag: Typically 4-6 weeks behind shipments
+
+Seasonality: Key dates (July 4th, Super Bowl, December holidays)
+
+Aging Tracking: Especially for whiskey/wine (barrel dates, vintage years)
+
+9. Use Cases to Enable
+Track depletion velocity of new SKU launches
+
+Compare on-premise vs off-premise mix by region
+
+Monitor distributor inventory days of supply
+
+Audit tax compliance across jurisdictions
+
+Analyze size trends (750ml vs 1L bottle performance)
+
+10. Common Pitfalls to Avoid
+Mixing shipment (wholesale) with depletion (retail)
+
+Missing ABC license expiration dates in compliance checks
+
+Failing to normalize case sizes across product types
+
+Overlooking franchise laws (exclusive distributor territories)
+
+This context should help you:
+
+Recognize alcohol-specific patterns in raw data
+
+Build appropriate star/snowflake schemas
+
+Establish correct aggregation paths
+
+Flag regulatory requirements
+
+Maintain proper temporal relationships
+
+Forecasting Logic:
+Forecasts will be generated based on historical trends, with options for users to select different time frames (e.g., 3-month, 6-month, 9-month, Flat).
+The system will need to accommodate manual inputs for forecasts, allowing users to override automated predictions when necessary.
+Saved versions of forecasts will be maintained, enabling users to track changes and compare against previous estimates.
+User Experience Considerations:
+The interface will allow users to filter data by market and SKU, providing a granular view of sales and inventory.
+A dynamic table will display actual sales, forecasted numbers, and any manual adjustments made by users.

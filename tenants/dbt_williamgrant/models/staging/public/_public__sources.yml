@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: public
+    database: "{{ target.database }}"
+    schema: public
+    description: "William Grant Utilities"
+    
+    tables:
+      - name: util_data

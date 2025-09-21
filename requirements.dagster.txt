@@ -1,0 +1,8 @@
+dagster==1.11.8
+dagster-dbt==0.27.8
+dbt-core==1.10.10
+dbt-snowflake==1.10.0
+dagster-postgres==0.27.8
+python-dotenv==1.0.1
+pyyaml==6.0.2
+dagster-webserver==1.11.8

@@ -1,0 +1,77 @@
+services:
+  - name: dagster-webserver
+    type: web
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: dagster-webserver -m dagster_apollo -h 0.0.0.0 -p $PORT
+    envVars:
+      - key: DAGSTER_HOME
+        value: /var/lib/dagster
+      - key: DAGSTER_PG_HOST
+        sync: false
+      - key: DAGSTER_PG_PORT
+        sync: false
+      - key: DAGSTER_PG_DB
+        sync: false
+      - key: DAGSTER_PG_USER
+        sync: false
+      - key: DAGSTER_PG_PASSWORD
+        sync: false
+      - key: DBT_PROFILE_NAME
+        value: apollo-snowflake
+      - key: DBT_TARGET
+        value: prod
+      - key: DBT_THREADS
+        value: "24"
+      - key: SNOWFLAKE_ACCOUNT
+        sync: false
+      - key: SNOWFLAKE_USER
+        sync: false
+      - key: SNOWFLAKE_ROLE
+        sync: false
+      - key: SNOWFLAKE_DATABASE
+        sync: false
+      - key: SNOWFLAKE_WAREHOUSE
+        sync: false
+      - key: SNOWFLAKE_SCHEMA
+        sync: false
+      - key: SNOWFLAKE_PRIVATE_KEY_PEM
+        sync: false
+  - name: dagster-daemon
+    type: worker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: dagster-daemon run
+    envVars:
+      - key: DAGSTER_HOME
+        value: /var/lib/dagster
+      - key: DAGSTER_PG_HOST
+        sync: false
+      - key: DAGSTER_PG_PORT
+        sync: false
+      - key: DAGSTER_PG_DB
+        sync: false
+      - key: DAGSTER_PG_USER
+        sync: false
+      - key: DAGSTER_PG_PASSWORD
+        sync: false
+      - key: DBT_PROFILE_NAME
+        value: apollo-snowflake
+      - key: DBT_TARGET
+        value: prod
+      - key: DBT_THREADS
+        value: "24"
+      - key: SNOWFLAKE_ACCOUNT
+        sync: false
+      - key: SNOWFLAKE_USER
+        sync: false
+      - key: SNOWFLAKE_ROLE
+        sync: false
+      - key: SNOWFLAKE_DATABASE
+        sync: false
+      - key: SNOWFLAKE_WAREHOUSE
+        sync: false
+      - key: SNOWFLAKE_SCHEMA
+        sync: false
+      - key: SNOWFLAKE_PRIVATE_KEY_PEM
+        sync: false

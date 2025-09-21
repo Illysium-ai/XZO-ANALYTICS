@@ -1,0 +1,92 @@
+-- DDLs for Forecast Publishing Workflow Tables in Snowflake
+-- Target Schema: APOLLO_WILLIAMGRANT.FORECAST
+
+
+-- Drop existing tables if they exist (order matters due to potential FKs)
+DROP TABLE IF EXISTS FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS;
+DROP TABLE IF EXISTS FORECAST.DEPLETIONS_FORECAST_PUBLICATIONS;
+DROP TABLE IF EXISTS FORECAST.DEPLETIONS_FORECAST_PUBLICATION_GROUPS;
+
+
+-- 1. Create a publication groups table for division-level grouping (Hybrid Table)
+CREATE OR REPLACE HYBRID TABLE FORECAST.DEPLETIONS_FORECAST_PUBLICATION_GROUPS (
+    GROUP_ID INTEGER IDENTITY(1,1) PRIMARY KEY,
+    DIVISION VARCHAR(100) NOT NULL,
+    PUBLICATION_DATE TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    INITIATED_BY_USER_ID VARCHAR(50) NOT NULL,
+    FORECAST_GENERATION_MONTH_DATE DATE NOT NULL,
+    PUBLICATION_NOTE TEXT,
+    GROUP_STATUS VARCHAR(50) DEFAULT 'active' -- e.g., 'active', 'archived'
+);
+COMMENT ON TABLE FORECAST.DEPLETIONS_FORECAST_PUBLICATION_GROUPS IS 'Stores division-level publication groupings for forecasts. Implemented as a Hybrid Table.';
+
+
+-- 2. Modify publications table to be market-level with group reference (Hybrid Table)
+CREATE OR REPLACE HYBRID TABLE FORECAST.DEPLETIONS_FORECAST_PUBLICATIONS (
+    PUBLICATION_ID INTEGER IDENTITY(1,1) PRIMARY KEY,
+    GROUP_ID INTEGER, -- Foreign key to DEPLETIONS_FORECAST_PUBLICATION_GROUPS.GROUP_ID
+    MARKET_CODE VARCHAR(50) NOT NULL,
+    PUBLISHED_BY_USER_ID VARCHAR(50) NOT NULL,
+    FORECAST_GENERATION_MONTH_DATE DATE NOT NULL,
+    PUBLICATION_NOTE TEXT,
+    PUBLICATION_STATUS VARCHAR(50) DEFAULT 'review', -- e.g., 'review', 'consensus', 'unpublished'
+    APPROVAL_STATUS_DATE TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    INDEX idx_pub_market_fgmd (MARKET_CODE, FORECAST_GENERATION_MONTH_DATE, PUBLICATION_STATUS) -- Example secondary index for Hybrid Table
+);
+COMMENT ON TABLE FORECAST.DEPLETIONS_FORECAST_PUBLICATIONS IS 'Stores market-level forecast publication details and status. Implemented as a Hybrid Table.';
+
+-- Optional: Add Foreign Key constraint for GROUP_ID after both tables are created
+-- ALTER TABLE FORECAST.DEPLETIONS_FORECAST_PUBLICATIONS 
+-- ADD CONSTRAINT FK_PUBLICATIONS_TO_GROUPS FOREIGN KEY (GROUP_ID) 
+-- REFERENCES FORECAST.DEPLETIONS_FORECAST_PUBLICATION_GROUPS(GROUP_ID);
+
+
+-- 3. Create published forecasts table for transactional data (Hybrid Table)
+CREATE OR REPLACE HYBRID TABLE FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS (
+    ID BIGINT IDENTITY(1,1) PRIMARY KEY, -- Changed BIGSERIAL to BIGINT IDENTITY
+    GROUP_ID INTEGER, -- Foreign key to DEPLETIONS_FORECAST_PUBLICATION_GROUPS.GROUP_ID
+    PUBLICATION_ID INTEGER NOT NULL, -- Foreign key to DEPLETIONS_FORECAST_PUBLICATIONS.PUBLICATION_ID
+    SOURCE_TABLE VARCHAR(50) NOT NULL, -- 'manual' or 'draft'
+    SOURCE_ID INTEGER, -- ID from the source table (if from manual table)
+    MARKET_NAME VARCHAR(100),
+    MARKET_CODE VARCHAR(50) NOT NULL,
+    DISTRIBUTOR_NAME VARCHAR(100),
+    DISTRIBUTOR_ID VARCHAR(50) NOT NULL,
+    BRAND VARCHAR(100),
+    BRAND_ID VARCHAR(50),
+    VARIANT VARCHAR(100),
+    VARIANT_ID VARCHAR(50),
+    VARIANT_SIZE_PACK_DESC VARCHAR(100),
+    VARIANT_SIZE_PACK_ID VARCHAR(50) NOT NULL,
+    FORECAST_YEAR INTEGER NOT NULL,
+    MONTH INTEGER NOT NULL,
+    FORECAST_METHOD VARCHAR(50) NOT NULL,
+    FORECAST_GENERATION_MONTH_DATE DATE NOT NULL,
+    CASE_EQUIVALENT_VOLUME NUMBER NOT NULL, -- Changed NUMERIC to NUMBER
+    VERSION_NUMBER INTEGER, -- only for records from manual table
+    PUBLISHED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    INDEX idx_pub_forecasts_pub_id (PUBLICATION_ID),
+    INDEX idx_pub_forecasts_join_keys (MARKET_CODE, DISTRIBUTOR_ID, VARIANT_SIZE_PACK_ID, FORECAST_GENERATION_MONTH_DATE)
+);
+COMMENT ON TABLE FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS IS 'Stores the actual forecast data that has been published. Implemented as a Hybrid Table for instant read-after-write/delete consistency for the application.';
+
+-- Optional: Add Foreign Key constraints after all tables are created
+-- ALTER TABLE FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS 
+-- ADD CONSTRAINT FK_PUBLISHED_TO_GROUPS FOREIGN KEY (GROUP_ID) 
+-- REFERENCES FORECAST.DEPLETIONS_FORECAST_PUBLICATION_GROUPS(GROUP_ID);
+
+-- ALTER TABLE FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS 
+-- ADD CONSTRAINT FK_PUBLISHED_TO_PUBLICATIONS FOREIGN KEY (PUBLICATION_ID) 
+-- REFERENCES FORECAST.DEPLETIONS_FORECAST_PUBLICATIONS(PUBLICATION_ID);
+
+
+-- Note on Indexes:
+-- The original DDL contained several CREATE INDEX statements for FORECAST.depletions_forecast_published_forecasts.
+-- For Snowflake standard tables, explicitly creating numerous B-tree indexes is less common. For Hybrid Tables, secondary indexes are used for performance.
+-- Performance is often managed via: 
+-- 1. Micro-partitions (automatic).
+-- 2. Clustering Keys (define on very large tables based on common query filter/join patterns).
+--    Example: ALTER TABLE FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS CLUSTER BY (MARKET_CODE, FORECAST_GENERATION_MONTH_DATE);
+-- 3. Query optimization.
+-- 4. Search Optimization Service (for highly selective point lookups on very large tables).
+-- Review query patterns against this table to determine if clustering is beneficial. 

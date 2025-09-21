@@ -1,0 +1,44 @@
+---
+description: Guidelines for Snow CLI Dev Database Safety
+alwaysApply: false
+---
+ß- **Default Database**: Always run Snow CLI SQL commands in `APOLLO_DEVELOPMENT` unless explicitly instructed otherwise.
+- **No Production DDL**: Never run DDL (CREATE/ALTER/DROP) in production while building/testing.
+- **Explicit Overrides**: If a different database is required, it must be explicitly stated in the request and shown in the command.
+
+## DO
+- **Use APOLLO_DEVELOPMENT** for all development runs
+```bash
+snow sql -q "USE DATABASE APOLLO_DEVELOPMENT; USE SCHEMA FORECAST; SELECT CURRENT_DATABASE(), CURRENT_SCHEMA();"
+```
+
+- **Fully qualify when needed**
+```bash
+snow sql -q "USE DATABASE APOLLO_DEVELOPMENT; USE SCHEMA FORECAST; CALL SP_GENERATE_BUDGET('2025-08-01', 'user_id');"
+```
+
+- **Reference dev-safe DDL files** (review before running)
+- [snowflake_budget_tables_ddl.sql](mdc:apollo-analytics/tenants/dbt_williamgrant/backend_functions/sf_budget_workflow/snowflake_budget_tables_ddl.sql)
+- [sp_batch_save_budgets.sql](mdc:apollo-analytics/tenants/dbt_williamgrant/backend_functions/sf_budget_workflow/sp_batch_save_budgets.sql)
+- [sp_generate_budget.sql](mdc:apollo-analytics/tenants/dbt_williamgrant/backend_functions/sf_budget_workflow/sp_generate_budget.sql)
+- [sp_approve_budget.sql](mdc:apollo-analytics/tenants/dbt_williamgrant/backend_functions/sf_budget_workflow/sp_approve_budget.sql)
+- [udtf_get_depletions_budget.sql](mdc:apollo-analytics/tenants/dbt_williamgrant/backend_functions/sf_budget_workflow/udtf_get_depletions_budget.sql)
+- [udf_is_budget_approved.sql](mdc:apollo-analytics/tenants/dbt_williamgrant/backend_functions/sf_budget_workflow/udf_is_budget_approved.sql)
+
+## DON'T
+- **Don't run DDL in production while developing**
+```bash
+# INCORRECT
+snow sql -q "USE DATABASE APOLLO_WILLIAMGRANT; USE SCHEMA FORECAST; CREATE OR REPLACE TABLE ...;"
+```
+
+- **Don't omit the development database context**
+```bash
+# INCORRECT (no DB context)
+snow sql -q "CREATE OR REPLACE PROCEDURE FORECAST.SP_APPROVE_BUDGET(...)"
+```
+
+## Notes
+- When switching environments, set the database explicitly in the command.
+- Prefer schema-level `USE` statements over relying on defaults.
+- This rule applies to any Snow CLI execution and inline SQL blocks produced by the assistant.

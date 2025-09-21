@@ -1,0 +1,6 @@
+version: 2
+
+models:
+  - name: stg_vip__sales
+  - name: stg_vip__depletions
+  - name: stg_vip__itm2da

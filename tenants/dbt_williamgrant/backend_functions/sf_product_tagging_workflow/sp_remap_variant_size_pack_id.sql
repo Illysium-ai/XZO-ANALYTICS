@@ -1,0 +1,202 @@
+
+CREATE OR REPLACE PROCEDURE MASTER_DATA.SP_REMAP_VARIANT_SIZE_PACK_ID(
+    P_OLD_VARIANT_SIZE_PACK_ID VARCHAR,
+    P_NEW_VARIANT_SIZE_PACK_ID VARCHAR,
+    P_DRY_RUN BOOLEAN,
+    P_UPDATED_BY_USER_ID VARCHAR
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+DECLARE
+    invalid_target_ex EXCEPTION (-20201, 'New variant_size_pack_id is not a valid canonical/system product.');
+    same_ids_ex EXCEPTION (-20202, 'Old and new variant_size_pack_id cannot be the same.');
+
+    V_SUMMARY VARCHAR;
+    V_COUNT NUMBER;
+    V_STAGE VARCHAR;
+    V_ERROR_MESSAGE VARCHAR;
+    V_ERROR_STATE VARCHAR;
+    V_ERROR_CODE NUMBER;
+BEGIN
+    V_STAGE := 'validate_inputs';
+    IF (P_OLD_VARIANT_SIZE_PACK_ID = P_NEW_VARIANT_SIZE_PACK_ID) THEN
+        RAISE same_ids_ex;
+    END IF;
+
+    -- Validate new ID exists in SKU master (canonical/system)
+    IF ((SELECT COUNT(*) FROM MASTER_DATA.APOLLO_SKU_MASTER WHERE VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID) = 0) THEN
+        RAISE invalid_target_ex;
+    END IF;
+
+    -- Dry run: compute counts only
+    IF (P_DRY_RUN) THEN
+        LET c1 NUMBER := (SELECT COUNT(*) FROM FORECAST.MANUAL_INPUT_DEPLETIONS_FORECAST WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c2 NUMBER := (SELECT COUNT(*) FROM FORECAST.MANUAL_INPUT_DEPLETIONS_FORECAST_VERSIONS WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c3 NUMBER := (SELECT COUNT(*) FROM FORECAST.MANUAL_INPUT_DEPLETIONS_BUDGET WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c4 NUMBER := (SELECT COUNT(*) FROM FORECAST.MANUAL_INPUT_DEPLETIONS_BUDGET_VERSIONS WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c5 NUMBER := (SELECT COUNT(*) FROM FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c6 NUMBER := (SELECT COUNT(*) FROM FORECAST.DEPLETIONS_FORECAST_INIT_DRAFT WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c7 NUMBER := (SELECT COUNT(*) FROM FORECAST.DEPLETIONS_FORECAST_INIT_DRAFT_CHAINS WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c8 NUMBER := (SELECT COUNT(*) FROM FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        LET c9 NUMBER := (SELECT COUNT(*) FROM FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD_CHAINS WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID);
+        RETURN 'DRY_RUN: counts -> manual_forecast=' || c1 || ', manual_forecast_versions=' || c2 || ', manual_budget=' || c3 || ', manual_budget_versions=' || c4 || ', published_forecast=' || c5 || ', init_draft=' || c6 || ', init_draft_chains=' || c7 || ', primary_method=' || c8 || ', primary_method_chains=' || c9;
+    END IF;
+
+    V_STAGE := 'begin_transaction';
+    BEGIN TRANSACTION;
+
+    -- If a manual forecast row already exists for the system VSP, prefer it and remove the old custom row; otherwise, move the row
+    V_STAGE := 'dedupe_manual_forecast';
+    DELETE FROM FORECAST.MANUAL_INPUT_DEPLETIONS_FORECAST t_old
+    WHERE t_old.VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID
+      AND EXISTS (
+        SELECT 1
+        FROM FORECAST.MANUAL_INPUT_DEPLETIONS_FORECAST t_new
+        WHERE t_new.MARKET_CODE = t_old.MARKET_CODE
+          AND t_new.DISTRIBUTOR_ID = t_old.DISTRIBUTOR_ID
+          AND t_new.FORECAST_YEAR = t_old.FORECAST_YEAR
+          AND t_new.MONTH = t_old.MONTH
+          AND t_new.FORECAST_METHOD = t_old.FORECAST_METHOD
+          AND t_new.FORECAST_GENERATION_MONTH_DATE = t_old.FORECAST_GENERATION_MONTH_DATE
+          AND t_new.VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+      );
+
+    V_STAGE := 'update_manual_forecast';
+    -- Manual Forecast
+    UPDATE FORECAST.MANUAL_INPUT_DEPLETIONS_FORECAST
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'update_manual_forecast_versions';
+    -- Manual Forecast Versions
+    UPDATE FORECAST.MANUAL_INPUT_DEPLETIONS_FORECAST_VERSIONS
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    -- If a manual budget row already exists for the system VSP, prefer it and remove the old custom row; otherwise, move the row
+    V_STAGE := 'dedupe_manual_budget';
+    DELETE FROM FORECAST.MANUAL_INPUT_DEPLETIONS_BUDGET t_old
+    WHERE t_old.VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID
+      AND EXISTS (
+        SELECT 1
+        FROM FORECAST.MANUAL_INPUT_DEPLETIONS_BUDGET t_new
+        WHERE t_new.MARKET_CODE = t_old.MARKET_CODE
+          AND t_new.DISTRIBUTOR_ID = t_old.DISTRIBUTOR_ID
+          AND t_new.FORECAST_YEAR = t_old.FORECAST_YEAR
+          AND t_new.MONTH = t_old.MONTH
+          AND t_new.BUDGET_CYCLE_DATE = t_old.BUDGET_CYCLE_DATE
+          AND t_new.VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+      );
+
+    V_STAGE := 'update_manual_budget';
+    -- Manual Budget
+    UPDATE FORECAST.MANUAL_INPUT_DEPLETIONS_BUDGET
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'update_manual_budget_versions';
+    -- Manual Budget Versions
+    UPDATE FORECAST.MANUAL_INPUT_DEPLETIONS_BUDGET_VERSIONS
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'update_published_forecasts';
+    -- Published Forecasts
+    UPDATE FORECAST.DEPLETIONS_FORECAST_PUBLISHED_FORECASTS
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'dedupe_primary_forecast_methods';
+    DELETE FROM FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD t_old
+    WHERE t_old.VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID
+      AND EXISTS (
+        SELECT 1
+        FROM FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD t_new
+        WHERE t_new.MARKET_CODE = t_old.MARKET_CODE
+          AND t_new.DISTRIBUTOR_ID = t_old.DISTRIBUTOR_ID
+          AND t_new.FORECAST_GENERATION_MONTH_DATE = t_old.FORECAST_GENERATION_MONTH_DATE
+          AND t_new.VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+      );
+
+    V_STAGE := 'update_primary_forecast_methods';
+    -- Primary forecast methods
+    UPDATE FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'dedupe_primary_forecast_methods_chains';
+    DELETE FROM FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD_CHAINS t_old
+    WHERE t_old.VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID
+      AND EXISTS (
+        SELECT 1
+        FROM FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD_CHAINS t_new
+        WHERE t_new.MARKET_CODE = t_old.MARKET_CODE
+          AND t_new.DISTRIBUTOR_ID = t_old.DISTRIBUTOR_ID
+          AND t_new.PARENT_CHAIN_CODE = t_old.PARENT_CHAIN_CODE
+          AND t_new.VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+      );
+
+    V_STAGE := 'update_primary_forecast_methods_chains';
+    UPDATE FORECAST.DEPLETIONS_FORECAST_PRIMARY_FORECAST_METHOD_CHAINS
+    SET VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'purge_generated_budget_outputs';
+    -- Purge/rebuild generated budget outputs for cycles impacted (optional purge all cycles)
+    DELETE FROM FORECAST.DEPLETIONS_BUDGET_GENERATED
+    WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+
+    V_STAGE := 'update_variant_size_pack_tag';
+    -- If a tag row already exists for the system VSP, prefer it and remove the old custom row; otherwise, move the row
+    IF ((SELECT COUNT(*) FROM MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG WHERE VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID) > 0) THEN
+        -- Ensure canonical flags/description on the system row and record provenance
+        UPDATE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+        SET IS_CUSTOM_PRODUCT = FALSE,
+            VARIANT_SIZE_PACK_DESC = (SELECT MAX(VARIANT_SIZE_PACK_DESC) FROM MASTER_DATA.APOLLO_SKU_MASTER WHERE VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID),
+            CUSTOM_BRAND = NULL,
+            CUSTOM_BRAND_ID = NULL,
+            CUSTOM_VARIANT = NULL,
+            CUSTOM_VARIANT_ID = NULL,
+            CUSTOM_PACK = NULL,
+            CUSTOM_SIZE_ML = NULL,
+            REMAPPED_FROM_VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID
+        WHERE VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID;
+
+        -- Remove the old custom tag row
+        DELETE FROM MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG
+        WHERE VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+    ELSE
+        -- Move the custom tag row to the system VSP id and record provenance
+        UPDATE MASTER_DATA.APOLLO_VARIANT_SIZE_PACK_TAG t
+        SET VARIANT_SIZE_PACK_DESC = (SELECT MAX(VARIANT_SIZE_PACK_DESC) FROM MASTER_DATA.APOLLO_SKU_MASTER WHERE VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID),
+            VARIANT_SIZE_PACK_ID = :P_NEW_VARIANT_SIZE_PACK_ID,
+            IS_CUSTOM_PRODUCT = FALSE,
+            CUSTOM_BRAND = NULL,
+            CUSTOM_BRAND_ID = NULL,
+            CUSTOM_VARIANT = NULL,
+            CUSTOM_VARIANT_ID = NULL,
+            CUSTOM_PACK = NULL,
+            CUSTOM_SIZE_ML = NULL,
+            REMAPPED_FROM_VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID
+        WHERE t.VARIANT_SIZE_PACK_ID = :P_OLD_VARIANT_SIZE_PACK_ID;
+    END IF;
+
+    V_STAGE := 'commit_transaction';
+    COMMIT;
+
+    RETURN 'SUCCESS: Remapped ' || :P_OLD_VARIANT_SIZE_PACK_ID || ' -> ' || :P_NEW_VARIANT_SIZE_PACK_ID;
+EXCEPTION
+    WHEN OTHER THEN
+        V_ERROR_MESSAGE := SQLERRM;
+        V_ERROR_STATE := SQLSTATE;
+        V_ERROR_CODE := SQLCODE;
+        SYSTEM$LOG_ERROR('MASTER_DATA.SP_REMAP_VARIANT_SIZE_PACK_ID failed at stage=' || COALESCE(V_STAGE, 'unknown') ||
+                         ' for old_vsp=''' || :P_OLD_VARIANT_SIZE_PACK_ID || ''' new_vsp=''' || :P_NEW_VARIANT_SIZE_PACK_ID || ''' user_id=''' || :P_UPDATED_BY_USER_ID || '''' ||
+                         ' code=' || TO_VARCHAR(V_ERROR_CODE) || ' state=' || V_ERROR_STATE || ' msg=' || V_ERROR_MESSAGE);
+        ROLLBACK;
+        RETURN 'ERROR at stage=' || COALESCE(V_STAGE, 'unknown') || ' for ' || :P_OLD_VARIANT_SIZE_PACK_ID || ' -> ' || :P_NEW_VARIANT_SIZE_PACK_ID ||
+               ' | code=' || TO_VARCHAR(V_ERROR_CODE) || ' | state=' || V_ERROR_STATE || ' | msg=' || V_ERROR_MESSAGE;
+END;
+$$;

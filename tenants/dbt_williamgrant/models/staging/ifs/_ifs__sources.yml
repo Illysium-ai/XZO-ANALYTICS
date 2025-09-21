@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: ifs
+    database: "{{ target.database }}"
+    schema: source_data
+    description: "William Grant IFS Data Source"
+    
+    tables:
+      - name: products

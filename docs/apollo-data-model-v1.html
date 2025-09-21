@@ -1,0 +1,543 @@
+<!DOCTYPE html><html><head>
+      <title>apollo-data-model-v1</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////Users/davidkim/.cursor/extensions/shd101wyy.markdown-preview-enhanced-0.8.18-universal/crossnote/dependencies/katex/katex.min.css">
+      
+      
+      <script type="text/javascript" src="file:////Users/davidkim/.cursor/extensions/shd101wyy.markdown-preview-enhanced-0.8.18-universal/crossnote/dependencies/mermaid/mermaid.min.js" charset="UTF-8"></script>
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="apollo-data-model-documentation">Apollo Data Model Documentation </h1>
+<h2 id="data-ingestion-from-s3-into-postgres">Data Ingestion from S3 into Postgres </h2>
+<p>This section details the automated pipeline that ingests data from Amazon S3 into the PostgreSQL database. The process is designed to be robust, scalable, and event-driven, leveraging several AWS services.</p>
+<h3 id="1-architecture-and-workflow">1. Architecture and Workflow </h3>
+<p>The data ingestion pipeline is orchestrated through a sequence of AWS services, starting with a file upload to S3 and culminating in a data upsert operation in PostgreSQL.</p>
+<p><strong>Workflow Diagram:</strong></p>
+<div class="mermaid">graph TD
+    A[File Upload to S3] --&gt;|S3 Event Notification| B(Lambda: s3_trigger);
+    B --&gt;|Sends Message| C{SQS FIFO Queue};
+    C --&gt;|Triggers| D(Lambda: glue_starter);
+    D --&gt;|Starts Job| E{AWS Glue Job};
+    E --&gt;|Reads File| A;
+    E --&gt;|Gets Credentials| F(Secrets Manager);
+    E --&gt;|Writes Data| G(PostgreSQL Database);
+    E --&gt;|Moves File| H(S3 Processed Folder);
+
+    subgraph "Data Pipeline"
+        A
+        B
+        C
+        D
+        E
+        F
+        G
+        H
+    end
+
+    style A fill:#228B22,stroke:#333,stroke-width:2px,color:#fff
+    style B fill:#FF9900,stroke:#333,stroke-width:2px,color:#fff
+    style C fill:#FF4500,stroke:#333,stroke-width:2px,color:#fff
+    style D fill:#FF9900,stroke:#333,stroke-width:2px,color:#fff
+    style E fill:#1E90FF,stroke:#333,stroke-width:2px,color:#fff
+    style F fill:#9932CC,stroke:#333,stroke-width:2px,color:#fff
+    style G fill:#32CD32,stroke:#333,stroke-width:2px,color:#fff
+    style H fill:#228B22,stroke:#333,stroke-width:2px,color:#fff
+</div><p><strong>Workflow Steps:</strong></p>
+<ol>
+<li><strong>File Upload</strong>: A user or automated process uploads a data file (e.g., <code>SLSDA.WGS.gz</code>) into a designated <code>upload/</code> prefix in the S3 bucket.</li>
+<li><strong>S3 Event Trigger</strong>: The S3 <code>ObjectCreated</code> event triggers the <code>lambda_s3_trigger</code> Lambda function.</li>
+<li><strong>Initial Validation and Queuing (<code>lambda_s3_trigger</code>)</strong>: This Lambda function performs initial validation on the uploaded file:
+<ul>
+<li>It ensures the file is in the <code>upload/</code> directory.</li>
+<li>It validates the filename against a regex (<code>^(?:.*_)?([^.]+)\.WGS\.(?:gz|csv)$</code>) to derive the target table name.</li>
+<li>It constructs a JSON message with file details (bucket, key, table name).</li>
+<li>It sends this message to a FIFO (First-In, First-Out) SQS queue. Using a FIFO queue with a <code>MessageGroupId</code> based on the table name ensures that multiple files for the same table are processed in the order they were received.</li>
+</ul>
+</li>
+<li><strong>Glue Job Orchestration (<code>lambda_glue_starter</code>)</strong>:
+<ul>
+<li>This Lambda function is triggered by messages in the SQS queue.</li>
+<li>It parses the message to get the file details.</li>
+<li>It gathers necessary configuration from environment variables (Glue job name, database credentials ARN, table-to-primary-key mappings).</li>
+<li>It starts the main AWS Glue job (<code>s3-upload-to-postgres-dynamic-upsert</code>), passing the file details and configuration as job arguments.</li>
+</ul>
+</li>
+<li><strong>Data Processing (AWS Glue Job)</strong>:
+<ul>
+<li>The core ETL logic resides in the <code>glue_s3_to_postgres_dynamic.py</code> script.</li>
+<li>It reads the specified file from S3.</li>
+<li>It performs extensive data cleaning, standardization, and optional aggregation.</li>
+<li>It connects to the PostgreSQL database using credentials fetched from AWS Secrets Manager.</li>
+<li>It dynamically creates or alters the target and staging tables as needed.</li>
+<li>It loads the data into a unique, temporary staging table.</li>
+<li>It executes a final SQL command to upsert, insert, or delete-then-insert data from the staging table into the final target table.</li>
+</ul>
+</li>
+<li><strong>Post-Processing</strong>:
+<ul>
+<li>The unique staging table is dropped.</li>
+<li>The processed file in S3 is moved from the <code>upload/</code> prefix to a <code>processed/</code> prefix to prevent re-processing.</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-file-formats-and-schema-expectations">2. File Formats and Schema Expectations </h3>
+<ul>
+<li><strong>Format</strong>: The pipeline expects <code>.csv</code> or <code>.csv.gz</code> files. The files must be comma-separated and include a header row.</li>
+<li><strong>Filename Convention</strong>: A strict naming convention is enforced by the <code>lambda_s3_trigger</code> function. The filename must end with <code>.WGS.csv</code> or <code>.WGS.gz</code> (case-insensitive) and must be preceded by the intended database table name.
+<ul>
+<li><strong>Pattern</strong>: <code>[optional_prefix_]TableName.WGS.gz</code></li>
+<li><strong>Example</strong>: <code>SLSDA.WGS.gz</code> will be mapped to the <code>slsda</code> table. <code>071024_VIPOUT.WGS.csv</code> will be mapped to the <code>vipout</code> table.</li>
+</ul>
+</li>
+<li><strong>Schema</strong>: The Glue job does not expect a fixed schema. It infers the schema from the file's header and content. Column names are automatically standardized to <code>snake_case</code> (e.g., <code>Distributor ID</code> becomes <code>distributor_id</code>). The job can handle new columns by automatically adding them to the target table in PostgreSQL.</li>
+</ul>
+<h3 id="3-authentication-and-security">3. Authentication and Security </h3>
+<ul>
+<li><strong>IAM Roles</strong>: Each component (Lambda, Glue) operates under a specific IAM Role with the principle of least privilege.
+<ul>
+<li>The <strong>S3 Trigger Lambda</strong> has permissions to read from the S3 <code>upload/</code> prefix and send messages to the SQS queue.</li>
+<li>The <strong>Glue Starter Lambda</strong> has permissions to read from the SQS queue and start Glue job runs.</li>
+<li>The <strong>Glue Job Role</strong> has permissions to read from S3, access the database credentials from Secrets Manager, and perform network operations to connect to the PostgreSQL database.</li>
+</ul>
+</li>
+<li><strong>Database Credentials</strong>: Database connection details (host, username, password) are not hardcoded. They are securely stored in <strong>AWS Secrets Manager</strong>. The Glue job retrieves these credentials at runtime using its IAM role.</li>
+</ul>
+<h3 id="4-scheduling-and-triggering">4. Scheduling and Triggering </h3>
+<p>The pipeline is entirely event-driven and does not rely on a fixed schedule. It is triggered automatically whenever a new file matching the criteria is uploaded to the S3 <code>upload/</code> prefix. This provides a real-time data ingestion capability.</p>
+<h2 id="data-upsert-and-update-logic">Data Upsert and Update Logic </h2>
+<p>The pipeline employs a sophisticated strategy to load data into PostgreSQL, ensuring data integrity, performance, and isolation between concurrent file processing jobs. The core of this logic is the use of a temporary, job-specific staging table.</p>
+<h3 id="1-the-staging-table-approach">1. The Staging Table Approach </h3>
+<p>Instead of writing directly to the final target table, every Glue job run first creates a unique staging table in a dedicated staging schema.</p>
+<ul>
+<li><strong>Unique Naming</strong>: The staging table is named dynamically using the job's run ID (e.g., <code>deplda_staging_jr_...</code>). This isolation prevents multiple jobs processing files for the same target table from interfering with each other.</li>
+<li><strong>Schema Synchronization</strong>: The staging table's schema is synchronized with the source data and the target table. The job will create the staging table with the correct columns and data types.</li>
+<li><strong>Data Loading</strong>: The processed, cleaned, and transformed data from the S3 file is written to this staging table in a single bulk operation using JDBC.</li>
+<li><strong>Atomic Operation</strong>: After the staging table is loaded, a single SQL transaction is used to transfer the data from staging to the final target table. This makes the final load operation fast and atomic.</li>
+<li><strong>Cleanup</strong>: The staging table is dropped at the end of the job run, regardless of success or failure.</li>
+</ul>
+<p><strong>Visualization of the Staging Process:</strong></p>
+<div class="mermaid">graph TD
+    subgraph "Glue Job Execution"
+        direction LR
+        A[Start Job] --&gt; B{Create Unique Staging Table};
+        B --&gt; C[Load Data into Staging Table];
+        C --&gt; D{Execute SQL on Target Table};
+        D --&gt; E[Drop Staging Table];
+    end
+
+    subgraph "PostgreSQL Database"
+        direction LR
+        F(Staging Schema) -- Contains --&gt; G(staging_table_xyz);
+        H(Target Schema) -- Receives Data From --&gt; G;
+    end
+
+    C -- Writes to --&gt; G;
+    D -- Reads from --&gt; G;
+    D -- Writes to --&gt; H;
+
+    style A fill:#1E90FF,stroke:#333,stroke-width:2px,color:#fff
+    style B fill:#87CEEB,stroke:#333,stroke-width:1px,color:#000
+    style C fill:#87CEEB,stroke:#333,stroke-width:1px,color:#000
+    style D fill:#87CEEB,stroke:#333,stroke-width:1px,color:#000
+    style E fill:#87CEEB,stroke:#333,stroke-width:1px,color:#000
+    style G fill:#F0E68C,stroke:#333,stroke-width:2px,color:#000
+    style H fill:#98FB98,stroke:#333,stroke-width:2px,color:#000
+</div><h3 id="2-table-specific-update-strategies">2. Table-Specific Update Strategies </h3>
+<p>The final SQL command used to load data from staging to the target table varies based on the table being processed. This allows for different data handling strategies (full refresh vs. incremental update).</p>
+<h4 id="a-default-strategy-incremental-upsert">a. Default Strategy: Incremental Upsert </h4>
+<p>For most tables, the default behavior is an "upsert" (INSERT ON CONFLICT ... DO UPDATE). This is an efficient incremental update strategy.</p>
+<ul>
+<li><strong>Logic</strong>:
+<ol>
+<li><code>INSERT</code> new rows from the staging table into the target table.</li>
+<li>If a row in the staging table has the same primary key as an existing row in the target table (a "conflict"), the <code>UPDATE</code> clause is triggered.</li>
+<li>The <code>UPDATE</code> is conditional: it only updates the columns if their values are actually different between the staging and target tables. This prevents unnecessary writes and keeps the <code>last_updated_glue</code> timestamp from changing for unmodified data.</li>
+</ol>
+</li>
+<li><strong>Example Pseudo-SQL</strong>:<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> target_schema<span class="token punctuation">.</span>my_table <span class="token punctuation">(</span>pk1<span class="token punctuation">,</span> pk2<span class="token punctuation">,</span> column1<span class="token punctuation">,</span> column2<span class="token punctuation">)</span>
+<span class="token keyword keyword-SELECT">SELECT</span> pk1<span class="token punctuation">,</span> pk2<span class="token punctuation">,</span> column1<span class="token punctuation">,</span> column2 <span class="token keyword keyword-FROM">FROM</span> staging_schema<span class="token punctuation">.</span>my_table_staging_xyz
+<span class="token keyword keyword-ON">ON</span> CONFLICT <span class="token punctuation">(</span>pk1<span class="token punctuation">,</span> pk2<span class="token punctuation">)</span> <span class="token keyword keyword-DO">DO</span> <span class="token keyword keyword-UPDATE">UPDATE</span>
+<span class="token keyword keyword-SET">SET</span>
+    column1 <span class="token operator">=</span> EXCLUDED<span class="token punctuation">.</span>column1<span class="token punctuation">,</span>
+    column2 <span class="token operator">=</span> EXCLUDED<span class="token punctuation">.</span>column2<span class="token punctuation">,</span>
+    last_updated_glue <span class="token operator">=</span> <span class="token keyword keyword-CURRENT_TIMESTAMP">CURRENT_TIMESTAMP</span>
+<span class="token keyword keyword-WHERE">WHERE</span>
+    target_schema<span class="token punctuation">.</span>my_table<span class="token punctuation">.</span>column1 <span class="token operator">IS</span> <span class="token keyword keyword-DISTINCT">DISTINCT</span> <span class="token keyword keyword-FROM">FROM</span> EXCLUDED<span class="token punctuation">.</span>column1
+    <span class="token operator">OR</span> target_schema<span class="token punctuation">.</span>my_table<span class="token punctuation">.</span>column2 <span class="token operator">IS</span> <span class="token keyword keyword-DISTINCT">DISTINCT</span> <span class="token keyword keyword-FROM">FROM</span> EXCLUDED<span class="token punctuation">.</span>column2<span class="token punctuation">;</span>
+</code></pre></li>
+</ul>
+<h4 id="b-strategy-for-distda-truncate-and-replace">b. Strategy for <code>distda</code>: Truncate and Replace </h4>
+<p>The <code>distda</code> table is treated as a full-refresh table. It contains distributor master data, and each new file is considered the latest source of truth.</p>
+<ul>
+<li><strong>Logic</strong>:
+<ol>
+<li>The entire <code>distda</code> target table is truncated (<code>TRUNCATE TABLE</code>).</li>
+<li>All records from the (already deduplicated) staging table are inserted into the now-empty target table.</li>
+</ol>
+</li>
+<li><strong>Example Pseudo-SQL</strong>:<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token comment">-- Step 1: Truncate the target table</span>
+<span class="token keyword keyword-TRUNCATE">TRUNCATE</span> <span class="token keyword keyword-TABLE">TABLE</span> target_schema<span class="token punctuation">.</span>distda<span class="token punctuation">;</span>
+
+<span class="token comment">-- Step 2: Insert all data from staging</span>
+<span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> target_schema<span class="token punctuation">.</span>distda <span class="token punctuation">(</span>distributor_id<span class="token punctuation">,</span> name<span class="token punctuation">,</span> address<span class="token punctuation">)</span>
+<span class="token keyword keyword-SELECT">SELECT</span> distributor_id<span class="token punctuation">,</span> name<span class="token punctuation">,</span> address <span class="token keyword keyword-FROM">FROM</span> staging_schema<span class="token punctuation">.</span>distda_staging_xyz<span class="token punctuation">;</span>
+</code></pre></li>
+</ul>
+<h4 id="c-strategy-for-slsda--slsdahist-delete-and-insert">c. Strategy for <code>slsda</code> &amp; <code>slsdahist</code>: Delete and Insert </h4>
+<p>Sales data tables (<code>slsda</code>, <code>slsdahist</code>) require a more surgical approach. A full-day's or full-distributor's worth of data might be re-sent. The logic ensures that existing data for the specified scope is removed before the new data is inserted, preventing duplicates.</p>
+<ul>
+<li><strong>Logic</strong>:
+<ol>
+<li>A <code>DELETE</code> command is run on the target table (<code>slsda</code> or <code>slsdahist</code>).</li>
+<li>The <code>WHERE</code> clause of the <code>DELETE</code> statement removes any rows whose keys (<code>dist_id</code>, <code>invoice_date</code>) are present in the current staging table.</li>
+<li>After the deletion is complete, a simple <code>INSERT</code> command copies all rows from the staging table into the target table.</li>
+</ol>
+</li>
+<li><strong>Example Pseudo-SQL</strong>:<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token comment">-- Step 1: Delete existing records that match the scope of the new file</span>
+<span class="token keyword keyword-DELETE">DELETE</span> <span class="token keyword keyword-FROM">FROM</span> target_schema<span class="token punctuation">.</span>slsda
+<span class="token keyword keyword-WHERE">WHERE</span> <span class="token punctuation">(</span>dist_id<span class="token punctuation">,</span> invoice_date<span class="token punctuation">)</span> <span class="token operator">IN</span> <span class="token punctuation">(</span>
+    <span class="token keyword keyword-SELECT">SELECT</span> <span class="token keyword keyword-DISTINCT">DISTINCT</span> dist_id<span class="token punctuation">,</span> invoice_date <span class="token keyword keyword-FROM">FROM</span> staging_schema<span class="token punctuation">.</span>slsda_staging_xyz
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">-- Step 2: Insert the new data from the staging table</span>
+<span class="token keyword keyword-INSERT">INSERT</span> <span class="token keyword keyword-INTO">INTO</span> target_schema<span class="token punctuation">.</span>slsda <span class="token punctuation">(</span>dist_id<span class="token punctuation">,</span> invoice_date<span class="token punctuation">,</span> sku<span class="token punctuation">,</span> quantity<span class="token punctuation">)</span>
+<span class="token keyword keyword-SELECT">SELECT</span> dist_id<span class="token punctuation">,</span> invoice_date<span class="token punctuation">,</span> sku<span class="token punctuation">,</span> quantity <span class="token keyword keyword-FROM">FROM</span> staging_schema<span class="token punctuation">.</span>slsda_staging_xyz<span class="token punctuation">;</span>
+</code></pre></li>
+</ul>
+<h2 id="master-data-tables">Master Data Tables </h2>
+<p>The master data tables are the core dimension tables in the Apollo data model. They are built and maintained by the Apollo data team and provide cleaned, standardized, and enriched views of key business entities like accounts, distributors, and products. These tables serve as the single source of truth for analytics and reporting, and act as helper tables to produce downstream data assets.</p>
+<p>The transformation logic resides in SQL files within the <code>tenants/dbt_williamgrant/models/marts/master/</code> directory.</p>
+<h3 id="1-apollo_account_master">1. <code>apollo_account_master</code> </h3>
+<p>This table represents the master list of all retail outlets (accounts) where products are sold. It combines and reconciles account information from multiple source systems to create a single, unified view of each customer.</p>
+<ul>
+<li><strong>Purpose</strong>: To serve as the definitive source for account attributes, including location, class of trade, and chain information.</li>
+<li><strong>Grain</strong>: One row per unique <code>outlet_id</code> and <code>distributor_id</code> combination.</li>
+<li><strong>Materialization</strong>: <code>incremental</code>. New or updated account information is appended or updated based on the composite unique key.</li>
+</ul>
+<p><strong>Key Columns</strong>:</p>
+<ul>
+<li><code>outlet_id</code>: The unique identifier for the retail outlet.</li>
+<li><code>distributor_id</code>: The unique identifier for the distributor servicing the outlet.</li>
+<li><code>outlet_name</code>: The "Doing Business As" (DBA) name of the outlet.</li>
+<li><code>address_line_1</code>, <code>city</code>, <code>state</code>, <code>zip_code</code>: Location information.</li>
+<li><code>out_cot</code>, <code>out_cot_desc</code>: The outlet's Class of Trade (e.g., 'Restaurant', 'Supermarket').</li>
+<li><code>vip_chain_code</code>, <code>vip_chain_desc</code>: National account/chain information, if applicable.</li>
+</ul>
+<p><strong>Derivation Logic</strong>:</p>
+<p>The <code>apollo_account_master</code> table is built by performing a <code>FULL OUTER JOIN</code> between two primary sources: <code>stg_vip__vipout</code> (from the VIP system) and <code>outda</code> (raw data from another system).</p>
+<ul>
+<li>It coalesces fields from both sources, prioritizing data from one system over the other to create a complete record.</li>
+<li>It joins with several other "value" tables (<code>vocot</code>, <code>vipvalue</code>, <code>srschain</code>, etc.) to enrich the data, translating codes into human-readable descriptions (e.g., turning a Class of Trade code into its description).</li>
+</ul>
+<p><strong>Data Flow Diagram</strong>:</p>
+<div class="mermaid">graph TD
+    subgraph "Source Tables (Raw)"
+        A[stg_vip__vipout]
+        B[outda]
+        C[vocot]
+        D[vipvalue]
+        E[...]
+    end
+
+    subgraph "Transformation (dbt)"
+        F(apollo_account_master.sql)
+    end
+
+    subgraph "Master Table"
+        G[apollo_account_master]
+    end
+
+    A -- Joined --&gt; F
+    B -- Joined --&gt; F
+    C -- Enriched --&gt; F
+    D -- Enriched --&gt; F
+    E -- Enriched --&gt; F
+    F -- Builds --&gt; G
+</div><h3 id="2-apollo_dist_master">2. <code>apollo_dist_master</code> </h3>
+<p>This table is the master list of all distributors. It combines data from the <code>distda</code> source file with Hyperion customer master data (<code>stg_hyperion__customer_master</code>) to create a comprehensive view of each distributor, including their hierarchy and market information.</p>
+<ul>
+<li><strong>Purpose</strong>: To provide a single source of truth for distributor attributes and their eligibility for various reporting processes.</li>
+<li><strong>Grain</strong>: One row per unique <code>distributor_id</code>.</li>
+<li><strong>Materialization</strong>: <code>table</code>. This model is fully rebuilt during each dbt run.</li>
+</ul>
+<p><strong>Key Columns</strong>:</p>
+<ul>
+<li><code>distributor_id</code>: The unique identifier for the distributor.</li>
+<li><code>distributor_name</code>: The name of the distributor.</li>
+<li><code>parent_distributor_id</code>: The ID of the parent distributor, for building hierarchies.</li>
+<li><code>certification_status</code>: The distributor's certification status (e.g., 'Certified').</li>
+<li><code>division_name</code>, <code>area_name</code>, <code>market_name</code>: The geographic hierarchy for the distributor.</li>
+<li><code>is_depletions_eligible</code>: A calculated flag (1 or 0) that indicates if a distributor's data should be included in depletions reporting based on their certification status and market.</li>
+</ul>
+<p><strong>Derivation Logic</strong>:</p>
+<p>The model performs a <code>FULL OUTER JOIN</code> between the raw <code>distda</code> table and the <code>stg_hyperion__customer_master</code> table on the distributor ID. This enriches the raw distributor data with financial and planning information from Hyperion.</p>
+<p>A key piece of logic is the calculation of the <code>is_depletions_eligible</code> flag. This flag implements a crucial business rule:</p>
+<ul>
+<li>A distributor must be 'Certified'.</li>
+<li>For specific markets ('USAOR1', 'USAUT1'), the distributor's division must be 'Green Book'.</li>
+<li>For all other markets, the division must be 'US Commercial Regions'.</li>
+</ul>
+<p><strong>Data Flow Diagram</strong>:</p>
+<div class="mermaid">graph TD
+    subgraph "Source Tables"
+        A[distda]
+        B[stg_hyperion__customer_master]
+        C[hyperion_customer_planning_group_mapping]
+    end
+
+    subgraph "Transformation (dbt)"
+        D(apollo_dist_master.sql)
+    end
+
+    subgraph "Master Table"
+        E[apollo_dist_master]
+    end
+
+    A -- Joined --&gt; D
+    B -- Joined --&gt; D
+    C -- Joined --&gt; D
+    D -- Builds --&gt; E
+</div><h3 id="3-apollo_sku_master">3. <code>apollo_sku_master</code> </h3>
+<p>This is the definitive master product table. It creates a cleansed and highly standardized view of every product SKU, reconciling data from multiple sources and calculating important metrics like case equivalent factors.</p>
+<ul>
+<li><strong>Purpose</strong>: To be the single source of truth for all product attributes, including brand and variant hierarchies, packaging information, and conversion factors.</li>
+<li><strong>Grain</strong>: One row per unique <code>sku_id</code>.</li>
+<li><strong>Materialization</strong>: <code>incremental</code>. It updates existing SKUs and adds new ones based on the <code>sku_id</code>.</li>
+</ul>
+<p><strong>Key Columns</strong>:</p>
+<ul>
+<li><code>sku_id</code>: The unique identifier for the product SKU.</li>
+<li><code>sku_description</code>: The full description of the SKU.</li>
+<li><code>brand</code>, <code>brand_id</code>: The standardized brand name and ID.</li>
+<li><code>variant</code>, <code>variant_id</code>: The standardized variant name and ID.</li>
+<li><code>variant_size_pack_id</code>: A key composite identifier representing a unique combination of variant, size, and pack count.</li>
+<li><code>units</code>: The number of units in a case.</li>
+<li><code>standardized_unit_volume_ml</code>: The volume of a single unit in milliliters.</li>
+<li><code>case_equivalent_factor</code>: A calculated field representing the 9-liter case equivalent for one sale of the SKU.</li>
+</ul>
+<p><strong>Derivation Logic</strong>:</p>
+<p>The derivation of the SKU master is a multi-step process involving several Common Table Expressions (CTEs):</p>
+<ol>
+<li><strong><code>itm_normalized</code></strong>: Reads the raw <code>itm2da</code> product data and performs initial cleaning. It calculates the <code>standardized_unit_volume_ml</code> and the <code>case_equivalent_factor</code>.</li>
+<li><strong><code>staged</code></strong>: Joins the normalized <code>itm2da</code> data with the Hyperion SKU master (<code>stg_hyperion__sku_master</code>) to combine transactional and financial product attributes. It creates composite keys like <code>variant_size_pack_id</code>.</li>
+<li><strong><code>unify_variant</code> &amp; <code>unify_variant_size_pack_desc</code></strong>: These CTEs use window functions (<code>first_value</code>) to propagate a single, consistent <code>brand</code>, <code>variant</code>, and description across all SKUs that belong to the same <code>variant_size_pack_id</code>. This enforces standardization.</li>
+<li><strong><code>ifs_products</code></strong>: Reads data from an alternate product source system (<code>products</code> table), which is treated as the highest priority source.</li>
+<li><strong><code>final_combined</code></strong>: Combines the data from <code>ifs_products</code> and the processed <code>itm2da</code> data. It uses a <code>UNION ALL</code> and a <code>source_rank</code> to ensure that if a SKU exists in <code>ifs_products</code>, that version is used; otherwise, the version from <code>itm2da</code> is used.</li>
+<li><strong>Final Select</strong>: The final query performs another layer of window functions over the combined data to ensure ultimate consistency for brand, variant, and descriptions before joining with a final <code>nrm_system_translation</code> table for Nielsen/Jenda reporting codes.</li>
+</ol>
+<p><strong>Data Flow Diagram</strong>:</p>
+<div class="mermaid">graph TD
+    subgraph "Source Tables"
+        A[itm2da]
+        B[stg_hyperion__sku_master]
+        C[products]
+        D[nrm_system_translation]
+    end
+
+    subgraph "Transformation (dbt)"
+        direction LR
+        S1(itm_normalized) --&gt; S2(staged);
+        S2 --&gt; S3(unify_variant);
+        C --&gt; S4(ifs_products);
+        S3 &amp; S4 --&gt; S5(final_combined);
+        S5 --&gt; F(Final Select);
+    end
+
+    subgraph "Master Table"
+        G[apollo_sku_master]
+    end
+
+    A --&gt; S1;
+    B -- Joined --&gt; S2;
+    D -- Joined --&gt; F;
+    F -- Builds --&gt; G;
+</div><h2 id="data-filtering-logic">Data Filtering Logic </h2>
+<p>The Apollo data model includes specific filtering logic to ensure that only relevant and certified data is used for downstream analysis, particularly for depletions reporting. This logic is primarily encapsulated within the <code>apollo_dist_master</code> table.</p>
+<h3 id="1-eligible-distributor-filter-is_depletions_eligible">1. Eligible Distributor Filter (<code>is_depletions_eligible</code>) </h3>
+<p>The key filter is the <code>is_depletions_eligible</code> column in the <code>apollo_dist_master</code> table. A distributor must have a value of <code>1</code> in this column to be included in most depletions-based models and reports.</p>
+<p>The logic to set this flag is as follows:</p>
+<ol>
+<li>The distributor's <code>certification_status</code> <strong>must</strong> be <code>'Certified'</code>.</li>
+<li>An additional market/division rule is applied:
+<ul>
+<li><strong>Either</strong> the <code>market_code</code> is 'USAOR1' or 'USAUT1' <strong>and</strong> the <code>division_description</code> is 'Green Book'.</li>
+<li><strong>Or</strong> the <code>market_code</code> is <strong>not</strong> 'USAOR1' or 'USAUT1' <strong>and</strong> the <code>division_description</code> is 'US Commercial Regions'.</li>
+</ul>
+</li>
+</ol>
+<p><strong>SQL Implementation</strong>:</p>
+<p>This logic is implemented as a <code>CASE</code> statement within the <code>apollo_dist_master.sql</code> dbt model:</p>
+<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-case">case</span>
+  <span class="token keyword keyword-when">when</span> src<span class="token punctuation">.</span>certification_status <span class="token operator">=</span> <span class="token string">'Certified'</span> <span class="token keyword keyword-then">then</span>
+    <span class="token comment">-- Oregon and Utah data comes from Green Book</span>
+    <span class="token comment">-- All other markets come from US Commercial Regions</span>
+    <span class="token keyword keyword-case">case</span> <span class="token keyword keyword-when">when</span> src<span class="token punctuation">.</span>market_code <span class="token operator">in</span> <span class="token punctuation">(</span><span class="token string">'USAOR1'</span><span class="token punctuation">,</span> <span class="token string">'USAUT1'</span><span class="token punctuation">)</span> <span class="token operator">and</span> src<span class="token punctuation">.</span>division_description <span class="token operator">=</span> <span class="token string">'Green Book'</span> <span class="token keyword keyword-then">then</span> <span class="token number">1</span>
+         <span class="token keyword keyword-when">when</span> src<span class="token punctuation">.</span>market_code <span class="token operator">not</span> <span class="token operator">in</span> <span class="token punctuation">(</span><span class="token string">'USAOR1'</span><span class="token punctuation">,</span> <span class="token string">'USAUT1'</span><span class="token punctuation">)</span> <span class="token operator">and</span> src<span class="token punctuation">.</span>division_description <span class="token operator">=</span> <span class="token string">'US Commercial Regions'</span> <span class="token keyword keyword-then">then</span> <span class="token number">1</span>
+         <span class="token keyword keyword-else">else</span> <span class="token number">0</span>
+         <span class="token keyword keyword-end">end</span>
+  <span class="token keyword keyword-else">else</span> <span class="token number">0</span>
+  <span class="token keyword keyword-end">end</span> <span class="token keyword keyword-as">as</span> is_depletions_eligible
+</code></pre><p><strong>Filter Logic Diagram</strong>:</p>
+<div class="mermaid">graph TD
+    A[Start: All Distributors] --&gt; B{"Certified?"};
+    B -- No --&gt; Z(Ineligible);
+    B -- Yes --&gt; C{"Market in (OR, UT)?"};
+    C -- Yes --&gt; D{"Division = 'Green Book'?"};
+    C -- No --&gt; E{"Division = 'US Commercial Regions'?"};
+    D -- Yes --&gt; Y(Eligible);
+    D -- No  --&gt; Z;
+    E -- Yes --&gt; Y;
+    E -- No  --&gt; Z;
+
+    style Y fill:#98FB98,stroke:#333,stroke-width:2px
+    style Z fill:#FF6347,stroke:#333,stroke-width:2px
+</div><p>This flag is then used as a <code>WHERE</code> clause in downstream models (e.g., <code>WHERE is_depletions_eligible = 1</code>) to easily filter for the correct set of distributors.</p>
+<h3 id="2-outlet-class-of-trade-filter">2. Outlet Class of Trade Filter </h3>
+<p>In addition to distributor eligibility, a filter is applied to exclude non-retail sales channels from depletions data. This is done by filtering on the <code>vip_cot_code</code> (VIP Class of Trade Code) from the <code>apollo_account_master</code> table.</p>
+<ul>
+<li><strong>Logic</strong>: Exclude any transaction where the account's Class of Trade code is <code>'06'</code>. The <code>COALESCE</code> function is used to treat <code>NULL</code> codes as a value that will not be filtered out (in this case, '99'), ensuring that accounts without a specified class of trade are not accidentally excluded.</li>
+<li><strong>Purpose</strong>: To ensure that analysis focuses on retail depletions and excludes internal transfers, samples, or other non-sale movements that are not representative of consumer sales.</li>
+</ul>
+<p><strong>SQL Implementation</strong>:</p>
+<p>This filter is typically applied in fact table models like <code>rad_sales_fact.sql</code> when joining with the account master table:</p>
+<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-WHERE">WHERE</span>
+    <span class="token keyword keyword-coalesce">coalesce</span><span class="token punctuation">(</span>o<span class="token punctuation">.</span>vip_cot_code<span class="token punctuation">,</span> <span class="token string">'99'</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token string">'06'</span>
+</code></pre><h2 id="depletions-rollup-logic">Depletions Rollup Logic </h2>
+<p>The primary depletions fact table, <code>rad_sales_daily_fact</code>, is built from the raw, daily-level <code>slsda</code> and <code>slsdahist</code> transaction files. The model does not summarize data to a monthly level; instead, it aggregates transactions to the <strong>invoice line level</strong>, while enriching the data with product and distributor attributes and calculating normalized quantity metrics. This provides a detailed, granular fact table suitable for a wide range of analytical queries.</p>
+<ul>
+<li><strong>Source Tables</strong>: <code>slsda</code> (current transactions), <code>slsdahist</code> (historical transactions).</li>
+<li><strong>Grain</strong>: One row per unique combination of <code>month_date</code>, <code>distributor_id</code>, <code>outlet_id</code>, <code>sku_id</code>, <code>invoice_date</code>, <code>invoice_number</code>, and <code>invoice_line</code>.</li>
+<li><strong>Model</strong>: <code>tenants/dbt_williamgrant/models/marts/fact/rad_sales_fact.sql</code></li>
+</ul>
+<h3 id="1-the-role-of-slsda">1. The Role of <code>slsda</code> </h3>
+<p>The <code>slsda</code> file contains the raw, granular sales transactions. Each row represents a line on a distributor's invoice to a retail account. This data is loaded by the S3/Glue pipeline and is the primary source for the <code>rad_sales_daily_fact</code> table.</p>
+<h3 id="2-aggregation-and-rollup-process">2. Aggregation and Rollup Process </h3>
+<p>The core logic resides in the final <code>SELECT</code> statement of the <code>rad_sales_fact.sql</code> model. After joining the raw sales data with the master tables (<code>apollo_dist_master</code>, <code>apollo_account_master</code>, <code>apollo_sku_master</code>), it performs a <code>GROUP BY</code> on the grain keys and calculates several key measures.</p>
+<p><strong>Key Calculations (The "Rollup")</strong>:</p>
+<p>The main purpose of the aggregation is to normalize the <code>quantity</code> sold into standard units.</p>
+<ol>
+<li><strong>Physical Quantity (<code>phys_quantity</code>)</strong>: This calculation converts sales reported in individual bottles (<code>UOM = 'B'</code>) into standard cases (<code>UOM = 'C'</code>) by dividing by the <code>units</code> per case from the SKU master.</li>
+<li><strong>Case Equivalent Quantity (<code>case_equivalent_quantity</code>)</strong>: This takes the calculated <code>phys_quantity</code> and multiplies it by the <code>case_equivalent_factor</code> from the SKU master. This normalizes all sales into a standard 9-liter case volume, allowing for accurate comparisons across different product sizes.</li>
+<li><strong>Financials</strong>: <code>net_amount</code> and <code>frontline_amount</code> are also summed up from the transaction lines.</li>
+</ol>
+<p><strong>Example SQL for Rollup Logic</strong>:</p>
+<pre data-role="codeBlock" data-info="sql" class="language-sql sql"><code><span class="token keyword keyword-select">select</span>
+  <span class="token comment">-- Grain Keys (distributor_id, outlet_id, sku_id, invoice_date, etc.)</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">,</span>
+  <span class="token comment">-- Physical Quantity Calculation</span>
+  <span class="token function">sum</span><span class="token punctuation">(</span><span class="token keyword keyword-case">case</span>
+    <span class="token keyword keyword-when">when</span> cd<span class="token punctuation">.</span>uom <span class="token operator">=</span> <span class="token string">'C'</span> <span class="token keyword keyword-then">then</span> cd<span class="token punctuation">.</span>quantity
+    <span class="token keyword keyword-when">when</span> cd<span class="token punctuation">.</span>uom <span class="token operator">=</span> <span class="token string">'B'</span> <span class="token keyword keyword-then">then</span> cd<span class="token punctuation">.</span>quantity::<span class="token keyword keyword-numeric">numeric</span> <span class="token operator">/</span> p<span class="token punctuation">.</span>units
+    <span class="token keyword keyword-else">else</span> cd<span class="token punctuation">.</span>quantity
+  <span class="token keyword keyword-end">end</span><span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> phys_quantity<span class="token punctuation">,</span>
+  <span class="token comment">-- Case Equivalent Calculation</span>
+  <span class="token function">sum</span><span class="token punctuation">(</span><span class="token keyword keyword-case">case</span>
+    <span class="token keyword keyword-when">when</span> cd<span class="token punctuation">.</span>uom <span class="token operator">=</span> <span class="token string">'C'</span> <span class="token keyword keyword-then">then</span> cd<span class="token punctuation">.</span>quantity
+    <span class="token keyword keyword-when">when</span> cd<span class="token punctuation">.</span>uom <span class="token operator">=</span> <span class="token string">'B'</span> <span class="token keyword keyword-then">then</span> cd<span class="token punctuation">.</span>quantity::<span class="token keyword keyword-numeric">numeric</span> <span class="token operator">/</span> p<span class="token punctuation">.</span>units
+    <span class="token keyword keyword-else">else</span> cd<span class="token punctuation">.</span>quantity
+  <span class="token keyword keyword-end">end</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token keyword keyword-coalesce">coalesce</span><span class="token punctuation">(</span>p<span class="token punctuation">.</span>case_equivalent_factor<span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> case_equivalent_quantity<span class="token punctuation">,</span>
+  <span class="token comment">-- Financial Aggregation</span>
+  <span class="token function">sum</span><span class="token punctuation">(</span>cd<span class="token punctuation">.</span>net_amount<span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> net_amount<span class="token punctuation">,</span>
+  <span class="token function">sum</span><span class="token punctuation">(</span>cd<span class="token punctuation">.</span>frontline_amount<span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> frontline_amount
+<span class="token keyword keyword-from">from</span>
+  combined_data cd
+  <span class="token keyword keyword-left">left</span> <span class="token keyword keyword-join">join</span> apollo_sku_master p <span class="token keyword keyword-on">on</span> cd<span class="token punctuation">.</span>sku_id <span class="token operator">=</span> p<span class="token punctuation">.</span>sku_id
+  <span class="token comment">-- ... other joins ...</span>
+<span class="token keyword keyword-where">where</span>
+  <span class="token comment">-- ... filters ...</span>
+<span class="token keyword keyword-group">group</span> <span class="token keyword keyword-by">by</span>
+  <span class="token comment">-- All non-aggregated columns</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+</code></pre><h3 id="3-data-flow-and-integration">3. Data Flow and Integration </h3>
+<div class="mermaid">graph TD
+    subgraph "Source Tables (Raw)"
+        A[slsda]
+        B[slsdahist]
+    end
+
+    subgraph "Master Dimensions"
+        C[apollo_dist_master]
+        D[apollo_account_master]
+        E[apollo_sku_master]
+    end
+
+    subgraph "Transformation (dbt)"
+        F(rad_sales_fact.sql)
+    end
+
+    subgraph "Fact Table"
+        G[rad_sales_daily_fact]
+    end
+
+    A -- Used by --&gt; F
+    B -- Used by --&gt; F
+    C -- Joined in --&gt; F
+    D -- Joined in --&gt; F
+    E -- Joined in --&gt; F
+    F -- Builds --&gt; G
+</div><p>The resulting <code>rad_sales_daily_fact</code> table contains both the original transaction details (like invoice number) and the summarized, normalized quantities. Analysts can then easily aggregate this further to any time dimension (month, quarter, year) in their BI tool by summing the <code>case_equivalent_quantity</code>.</p>
+
+      </div>
+      
+      
+    
+    
+    <script type="module">
+// TODO: If ZenUML gets integrated into mermaid in the future,
+//      we can remove the following lines.
+
+
+var MERMAID_CONFIG = ({"startOnLoad":false});
+if (typeof MERMAID_CONFIG !== 'undefined') {
+  MERMAID_CONFIG.startOnLoad = false
+  MERMAID_CONFIG.cloneCssStyles = false
+  MERMAID_CONFIG.theme = "default"
+}
+
+mermaid.initialize(MERMAID_CONFIG || {})
+if (typeof(window['Reveal']) !== 'undefined') {
+  function mermaidRevealHelper(event) {
+    var currentSlide = event.currentSlide
+    var diagrams = currentSlide.querySelectorAll('.mermaid')
+    for (var i = 0; i < diagrams.length; i++) {
+      var diagram = diagrams[i]
+      if (!diagram.hasAttribute('data-processed')) {
+        mermaid.init(null, diagram, ()=> {
+          Reveal.slide(event.indexh, event.indexv)
+        })
+      }
+    }
+  }
+  Reveal.addEventListener('slidetransitionend', mermaidRevealHelper)
+  Reveal.addEventListener('ready', mermaidRevealHelper)
+  await mermaid.run({
+    nodes: document.querySelectorAll('.mermaid')
+  })
+} else {
+  await mermaid.run({
+    nodes: document.querySelectorAll('.mermaid')
+  })
+}
+</script>
+    
+    
+    
+  
+    </body></html>
